@@ -9,7 +9,10 @@
 
 </div>
 
-## Contribuidores
+## 🫂 Contribuidores
+
 <a href="https://github.com/juanestban/godot-100-juegos-clasicos/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=juanestban/godot-100-juegos-clasicos" />
 </a>
+
+<p></p>
