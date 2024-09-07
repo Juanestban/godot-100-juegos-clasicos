@@ -13,32 +13,120 @@ enum Shape {
 	SQUARE,
 	LARGE,
 	ZERO,
+	SALT,
 	ITER,
 	TRACK
 }
 
+const PIECES_ROTATE = {
+	Shape.SQUARE: [
+		[
+			[1, 1],
+			[1, 1]
+		]
+	],
+	Shape.LARGE: [
+		[
+			[1, 0],
+			[1, 0],
+			[1, 1]
+		],
+		[
+			[1, 1, 1],
+			[1, 0, 0]
+		],
+		[
+			[1, 1],
+			[0, 1],
+			[0, 1]
+		],
+		[
+			[0, 0, 1],
+			[1, 1, 1]
+		]
+	],
+	Shape.ZERO: [
+		[
+			[1, 1, 0],
+			[0, 1, 1],
+		],
+		[
+			[0, 1],
+			[1, 1],
+			[1, 0],
+		]
+	],
+	Shape.SALT: [
+		[
+			[0, 1, 1],
+			[1, 1, 0],
+		],
+		[
+			[1, 0],
+			[1, 1],
+			[0, 1],
+		]
+	],
+	Shape.ITER: [
+		[
+			[1, 1, 1, 1]
+		],
+		[
+			[1],
+			[1],
+			[1],
+			[1],
+		]
+	],
+	Shape.TRACK: [
+		[
+			[0, 1, 0],
+			[1, 1, 1]
+		],
+		[
+			[1, 0],
+			[1, 1],
+			[1, 0]
+		],
+		[
+			[1, 1, 1],
+			[0, 1, 0]
+		],
+		[
+			[0, 1],
+			[1, 1],
+			[0, 1]
+		],
+	],
+}
+
 const SHAPES = [
-	# square
+	# 0:square
 	[
 		[1, 1],
 		[1, 1]
 	],
-	# large
+	# 1:large
 	[
 		[1, 0],
 		[1, 0],
 		[1, 1]
 	],
-	# zero
+	# 2:zero
 	[
 		[1, 1, 0],
 		[0, 1, 1],
 	],
-	# iter
+	# 3:salt
+	[
+		[0, 1, 1],
+		[1, 1, 0],
+	],
+	# 4:iter
 	[
 		[1, 1, 1, 1],
 	],
-	# track
+	# 5:track
 	[
 		[0, 1, 0],
 		[1, 1, 1]
@@ -50,22 +138,22 @@ const HEIGHT_BOARD = 18
 
 # row:18[ col:14[] ]
 const BOARD = [
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
+	[{ "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }, { "value": 0, "color": -1 }],
 ]

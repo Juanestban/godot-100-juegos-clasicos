@@ -5,15 +5,17 @@ class_name Tetris extends Node2D
 @onready var blocks_tilemap_layer: TileMapLayer = $BlocksTileMapLayer
 @onready var cooldown: Timer = $Cooldown
 
+@onready var new_shape: int = shape
 @onready var is_game_over = false
-@onready var base_piece_color = randi_range(0, 5)
+@onready var base_piece_color = randi_range(0, 4)
 @onready var width_board = TetrisConstants.WIDTH_BOARD
 @onready var height_board = TetrisConstants.HEIGHT_BOARD
 @onready var board = TetrisConstants.BOARD.duplicate(true)
 
 @onready var piece = {
+	"rotate": 0,
 	"position": { "x": 6, "y": 1 },
-	"shape": TetrisConstants.SHAPES[shape]
+	"shape": TetrisConstants.PIECES_ROTATE[shape][0],
 }
 
 func _ready():
@@ -40,7 +42,8 @@ func move():
 		return
 
 	if Input.is_action_just_pressed("rotate"):
-		rotate_piece()
+		if not check_collision():
+			rotate_piece()
 		return
 
 	if Input.is_action_just_pressed("down"):
@@ -55,9 +58,10 @@ func move():
 func draw():
 	for row in range(height_board):
 		for col in range(width_board):
-			var value = board[row][col]
+			var value = board[row][col].value
+			var color = board[row][col].color
 
-			set_cell(Vector2i(col, row), value == 0)
+			set_cell(Vector2i(col, row), value == 0, color)
 
 	for y in range(piece.shape.size()):
 		var row = piece.shape[y]
@@ -67,6 +71,9 @@ func draw():
 			var piece_x = piece.position.x
 			var piece_y = piece.position.y
 
+			if value == 0:
+				continue
+
 			set_cell(Vector2i(x + piece_x, y + piece_y), value == 0, base_piece_color)
 
 func update():
@@ -74,7 +81,7 @@ func update():
 		draw()
 
 func check_collision() -> bool:
-	if piece.position.x < 0 or piece.position.x >= width_board - 1 or piece.position.y >= height_board - 1:
+	if piece.position.x < 0 or piece.position.x > width_board - 1 or piece.position.y >= height_board - 1:
 		return true
 
 	var piece_x = piece.position.x
@@ -91,7 +98,7 @@ func check_collision() -> bool:
 			if x + piece_x >= width_board:
 				return true
 
-			if value == 1 and board[y + piece_y][x + piece_x] == 1:
+			if value == 1 and board[y + piece_y][x + piece_x].value == 1:
 				return true
 
 	return false
@@ -119,12 +126,15 @@ func solidify_piece():
 			var piece_y = piece.position.y
 
 			if value == 1:
-				board[y + piece_y][x + piece_x] = 1
+				board[y + piece_y][x + piece_x].value = 1
+				board[y + piece_y][x + piece_x].color = base_piece_color
 
-	piece.position.x = width_board / 2 - 2
+	new_shape = randi_range(0, 5)
+	piece.rotate = 0
+	piece.position.x = floor(width_board / 2 - 2)
 	piece.position.y = 1
-	piece.shape = TetrisConstants.SHAPES[randi_range(0, 4)]
-	base_piece_color = randi_range(0, 5)
+	piece.shape = TetrisConstants.SHAPES[new_shape]
+	base_piece_color = randi_range(0, 4)
 
 	if check_collision():
 		print('game over!!!')
@@ -132,32 +142,30 @@ func solidify_piece():
 		board = TetrisConstants.BOARD.duplicate()
 
 func rotate_piece():
-	var rotated = []
+	var length = len(TetrisConstants.PIECES_ROTATE[new_shape])
+	var rotate_pos = piece.rotate + 1 if piece.rotate + 1 < length else 0
+	var rotated = TetrisConstants.PIECES_ROTATE[new_shape][rotate_pos]
 
-	for i in range(piece.shape[0].size()):
-		var row = []
-
-		for j in range(piece.shape.size()):
-			row.append(piece.shape[j - piece.shape.size()][i])
-
-		rotated.append(row)
+	if piece.position.x >= width_board - 3 and piece.position.x <= width_board:
+		return
 
 	piece.shape = rotated
+	piece.rotate = rotate_pos
 
 func remove_row():
 	for y in range(board.size()):
 		var row = board[y]
 		
-		if row.all(func(value): return value == 1):
+		if row.all(func(ob): return ob.value == 1):
 			board.remove_at(y)
 			var new_row = []
 			new_row.resize(width_board)
-			new_row.fill(0)
+			new_row.fill({ "value": 0, "color": -1 })
 			var new_board = [new_row]
 			new_board.append_array(board)
 			board = new_board
 
-func set_cell(coords: Vector2i, is_empty = false, color: int = TetrisConstants.BlockColor.YELLOW):
+func set_cell(coords: Vector2i, is_empty = false, color: int = -1):
 	var source_id = 0
 	var atlas_coords = Vector2i(color, 0) if not is_empty else Vector2i(5, 0)
 
